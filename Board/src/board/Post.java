@@ -6,7 +6,5 @@ public class Post extends Board{
 	public Post(String head, String body) {
 		this.head = head;
 		this.body = body;
-		this.number = Board.cnt++;
 	}
-	
 }
