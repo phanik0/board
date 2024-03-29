@@ -7,4 +7,9 @@ public class Post extends Board{
 		this.head = head;
 		this.body = body;
 	}
+	@Override
+	public String toString() {
+		return String.format("제목 : %s \n 내용 : %s",head, body );
+	}
 }
+

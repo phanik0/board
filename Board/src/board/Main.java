@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-abstract public class Main {
+public class Main {
 	private Map<Integer, Post> posts;// 게시글 번호/ 게시글
 	private UserManager users;
 	private BoardManager boards;
@@ -23,6 +23,12 @@ abstract public class Main {
 	private boolean isMenu;
 	private User loggedInUser;
 	private int log;
+
+	private int curPageNum; // 현재 페이지 번
+	private int pageCnt; // 전체 페이지 개수
+	private int startRow; // 현재 페이지의 게시글 시작번호
+	private int endRow; // 현재 페이지의 게시글 마지막번호
+	public static final int PAGE_SIZE = 5;
 
 	private int inputNumber(String message) {
 		System.out.println(message);
@@ -43,16 +49,38 @@ abstract public class Main {
 
 	private void setBoard() {
 		posts = new HashMap<>();
+		boards = new BoardManager();
+		users = new UserManager();
+
+	}
+
+	private void setPage() {
+		startRow = Board.cnt;
+		endRow = startRow + BoardManager.PAGE_SIZE - 1;
+		endRow = endRow >= Board.cnt ? Board.cnt - 1 : endRow;
+
+		pageCnt = Board.cnt / BoardManager.PAGE_SIZE;
+		pageCnt = Board.cnt % BoardManager.PAGE_SIZE > 0 ? ++pageCnt : pageCnt;
+
+	}
+
+	private void movePage() {
+		
 	}
 
 	private void runBoard() {
 		int sel = inputNumber("메뉴를 선택해주세요");
+		if (sel < 0 || sel > BoardManager.PAGE_SIZE) {
+			System.err.println("올바른 번호를 입력해주세요");
+		}
 		if (sel == MENU) {
 			isMenu = true;
 			if (log != -1)
 				runLogInBoard();
 			else
 				runLogOutBoard();
+		} else {
+
 		}
 	}
 
@@ -61,13 +89,13 @@ abstract public class Main {
 		int sel = inputNumber("메뉴를 선택해주세요");
 		switch (sel) {
 		case WRITE:
-			writePost(loggedInUser);
+			boards.writePost(loggedInUser);
 			break;
 		case MODIFY:
-			modifyPost(loggedInUser);
+			boards.modifyPost(loggedInUser);
 			break;
 		case DELETE:
-			deletePost(loggedInUser);
+			boards.deletePost(loggedInUser);
 			break;
 		case LOG_OUT:
 			logOut();
@@ -78,12 +106,6 @@ abstract public class Main {
 
 		}
 	}
-
-	abstract public void writePost(User user);
-
-	abstract public void modifyPost(User user);
-
-	abstract public void deletePost(User user);
 
 	private void logOut() {
 		log = -1;
@@ -98,7 +120,7 @@ abstract public class Main {
 			System.err.println("비밀번호가 일치하지 않습니다");
 			return;
 		}
-		users.remove(log);
+		users.removeUser(log);
 		isMenu = false;
 
 	}
@@ -136,8 +158,8 @@ abstract public class Main {
 			return;
 		}
 		String pw = inputString("비밀번호를 입력해주세요");
-		User user = new User(id,pw);
-		users.add(user);
+		User user = new User(id, pw);
+		users.addUser(user);
 		isMenu = false;
 
 	}
@@ -152,18 +174,33 @@ abstract public class Main {
 		} else
 			System.out.println("[0]메뉴");
 		System.out.println("=============================");
-		for (int i = BoardManager.PAGE_SIZE; i >= 0; i--) {
-			Post post = posts.get(i);
-			System.out.println(post);
+		if (startRow > PAGE_SIZE)
+			for (int i = startRow; i >= 0; i--) {
+				Post post = posts.get(i);
+				System.out.println(post);
+			}
+		else {
+			for (int i = startRow; i >= startRow - PAGE_SIZE; i--) {
+				Post post = posts.get(i);
+				System.out.println(post);
+			}
+
 		}
 		System.out.println("=============================");
 		System.out.println("[1]이전페이지 [2]다음페이지");
-		System.out.printf("[%d/%d]", boards.getCurPageNum(), boards.getPageCnt());
+		System.out.printf("[%d/%d]", boards.getCurPageNum(), pageCnt);
 		System.out.println("=============================");
 
 	}
+
 	public void run() {
-		
+		setBoard();
+		while (true) {
+			movePage();
+			printBoard();
+			runBoard();
+		}
+
 	}
 	/*
 	 * 기본적인 기능 로그인 / 로그아웃 / 회원가입 / 회원탈퇴 / 글 조회(전체) / 글 추가 / 글 수정(권한:글쓴이) / 글

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class BoardManager extends Main{
+public class BoardManager{
 	private Scanner scan = new Scanner(System.in);
 	private Map<Integer, Board> posts = new HashMap<Integer, Board>();// 게시글 번호/ 게시글
 	public static final int PAGE_SIZE = 5; // 한페이지에 보여줄 게시글 수
@@ -19,7 +19,9 @@ public class BoardManager extends Main{
 	 * 기본적인 기능 로그인 / 로그아웃 / 회원가입 / 회원탈퇴 / 글 조회(전체) / 글 추가 / 글 수정(권한:글쓴이) / 글
 	 * 삭제(권한:글쓴이)
 	 */
-	
+	public Board getBoard(int index) {
+		return posts.get(index);
+	}
 	public int getCurPageNum() {
 		return curPageNum;
 	}
@@ -65,7 +67,7 @@ public class BoardManager extends Main{
 		Post post = new Post(head,body);
 		return post;
 	}
-	@Override
+	
 	public void writePost(User user) {
 		// TODO Auto-generated method stub
 		Post post = writePost();
@@ -73,7 +75,7 @@ public class BoardManager extends Main{
 		Board board = new Board(post);
 		posts.put(Board.cnt, board);
 	}
-	@Override
+	
 	public void modifyPost(User user) {
 		// TODO Auto-generated method stub
 		int index = inputNumber("수정하실 게시글 번호를 입력해주세요")-1;
@@ -85,7 +87,7 @@ public class BoardManager extends Main{
 		Board board = new Board(post);
 		posts.put(index, board);
 	}
-	@Override
+	
 	public void deletePost(User user) {
 		// TODO Auto-generated method stub
 		int index = inputNumber("삭제하실 게시글 번호를 입력해주세요")-1;

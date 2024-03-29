@@ -7,6 +7,10 @@ public class UserManager {
 	public User getUser(int index) {
 		return users.get(index).clone();
 	}
+	
+	public void addUser(User user) {
+		users.add(user);
+	}
 	public User findUser(String id) {
 		User user = null;
 		for (int i = 0; i < users.size(); i++) {
@@ -36,5 +40,7 @@ public class UserManager {
 		}
 		return false;
 	}
-	
+	public void removeUser(int index) {
+		users.remove(index);
+	}
 }
