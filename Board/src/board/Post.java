@@ -1,8 +1,8 @@
 package board;
 
-public class Post extends Board{
+public class Post {
 	private String head,body;
-	private int number;
+	protected static int postNum;
 	public Post(String head, String body) {
 		this.head = head;
 		this.body = body;

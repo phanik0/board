@@ -3,16 +3,20 @@ package board;
 import java.util.ArrayList;
 
 public class UserManager {
-	private ArrayList<User>users = new ArrayList<>();
+	private ArrayList<User> users = new ArrayList<>();
+
 	public User getUser(int index) {
 		return users.get(index).clone();
 	}
+
 	public int getSize() {
 		return users.size();
 	}
+
 	public void addUser(User user) {
 		users.add(user);
 	}
+
 	public User findUser(String id) {
 		User user = null;
 		for (int i = 0; i < users.size(); i++) {
@@ -22,6 +26,7 @@ public class UserManager {
 		}
 		return user;
 	}
+
 	public int findUserIndex(String id) {
 		int index = -1;
 		for (int i = 0; i < users.size(); i++) {
@@ -31,6 +36,7 @@ public class UserManager {
 		}
 		return index;
 	}
+
 	public boolean checkUserInfo(String id, String pw) {
 		User user = findUser(id);
 		if (user == null) {
@@ -42,6 +48,7 @@ public class UserManager {
 		}
 		return false;
 	}
+
 	public void removeUser(int index) {
 		users.remove(index);
 	}
