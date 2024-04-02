@@ -3,11 +3,13 @@ package board;
 import java.util.ArrayList;
 
 public class UserManager {
-	private ArrayList<User>users;
+	private ArrayList<User>users = new ArrayList<>();
 	public User getUser(int index) {
 		return users.get(index).clone();
 	}
-	
+	public int getSize() {
+		return users.size();
+	}
 	public void addUser(User user) {
 		users.add(user);
 	}

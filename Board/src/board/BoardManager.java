@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class BoardManager{
 	private Scanner scan = new Scanner(System.in);
-	private Map<Integer, Board> posts = new HashMap<Integer, Board>();// 게시글 번호/ 게시글
+	protected static Map<Integer, Board> posts = new HashMap<Integer, Board>();// 게시글 번호/ 게시글
 	public static final int PAGE_SIZE = 5; // 한페이지에 보여줄 게시글 수
 
 	private int curPageNum; // 현재 페이지 번
@@ -19,9 +19,7 @@ public class BoardManager{
 	 * 기본적인 기능 로그인 / 로그아웃 / 회원가입 / 회원탈퇴 / 글 조회(전체) / 글 추가 / 글 수정(권한:글쓴이) / 글
 	 * 삭제(권한:글쓴이)
 	 */
-	public Board getBoard(int index) {
-		return posts.get(index);
-	}
+	
 	public int getCurPageNum() {
 		return curPageNum;
 	}
@@ -69,16 +67,17 @@ public class BoardManager{
 	}
 	
 	public void writePost(User user) {
-		// TODO Auto-generated method stub
+		
 		Post post = writePost();
 		user.addMyPost(post);
 		Board board = new Board(post);
 		posts.put(Board.cnt, board);
+		System.out.println(posts);
 	}
 	
 	public void modifyPost(User user) {
-		// TODO Auto-generated method stub
-		int index = inputNumber("수정하실 게시글 번호를 입력해주세요")-1;
+		
+		int index = inputNumber("수정하실 게시글 번호를 입력해주세요");
 		if(index <0 || index > user.getMyPostNum()) {
 			System.err.println("올바른 범위의 게시글번호를 입력해주세요");
 			return;
@@ -89,13 +88,14 @@ public class BoardManager{
 	}
 	
 	public void deletePost(User user) {
-		// TODO Auto-generated method stub
-		int index = inputNumber("삭제하실 게시글 번호를 입력해주세요")-1;
+	
+		int index = inputNumber("삭제하실 게시글 번호를 입력해주세요");
 		if(index <0 || index > user.getMyPostNum()) {
 			System.err.println("올바른 범위의 게시글번호를 입력해주세요");
 			return;
 		}
 		posts.remove(index);
+		Board.cnt --;
 	}
 
 	

@@ -1,7 +1,9 @@
 package board;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -48,23 +50,34 @@ public class Main {
 	}
 
 	private void setBoard() {
+		log = -1;
 		posts = new HashMap<>();
 		boards = new BoardManager();
 		users = new UserManager();
-
+		curPageNum = 0;
 	}
 
 	private void setPage() {
-		startRow = Board.cnt;
-		endRow = startRow + BoardManager.PAGE_SIZE - 1;
-		endRow = endRow >= Board.cnt ? Board.cnt - 1 : endRow;
-
+		startRow = Board.cnt-curPageNum * BoardManager.PAGE_SIZE;
+		endRow = startRow - BoardManager.PAGE_SIZE + 1;
+		endRow = endRow <= Board.cnt ? 0 : endRow;
+		
 		pageCnt = Board.cnt / BoardManager.PAGE_SIZE;
 		pageCnt = Board.cnt % BoardManager.PAGE_SIZE > 0 ? ++pageCnt : pageCnt;
-
+		System.out.println(startRow);
+		System.out.println(endRow);
 	}
 
-	private void movePage() {
+	private void movePage(int sel) {
+		setPage();
+		if (sel != 1|| sel!=2) {
+			System.err.println("올바른 번호를 입력해주세요");
+			return;
+		}
+		if(sel == 1 && curPageNum >1) {
+			curPageNum --;
+		}else if(sel ==2 && curPageNum < Board.cnt)
+			curPageNum ++;
 		
 	}
 
@@ -75,17 +88,19 @@ public class Main {
 		}
 		if (sel == MENU) {
 			isMenu = true;
-			if (log != -1)
-				runLogInBoard();
-			else
+			if (log == -1)
 				runLogOutBoard();
-		} else {
-
+			else
+				runLogInBoard();
+		} else if(sel == 1){
+			movePage(sel);
+		}else if(sel == 2) {
+			movePage(sel);
 		}
 	}
 
 	private void runLogInBoard() {
-
+		printLogInBoard();
 		int sel = inputNumber("메뉴를 선택해주세요");
 		switch (sel) {
 		case WRITE:
@@ -106,7 +121,13 @@ public class Main {
 
 		}
 	}
-
+	private void printLogInBoard() {
+		System.out.println("[1]글쓰기");
+		System.out.println("[2]글 수정");
+		System.out.println("[3]글 삭제");
+		System.out.println("[4]로그아웃");
+		System.out.println("[5]회원 탈퇴");
+	}
 	private void logOut() {
 		log = -1;
 		System.out.println("로그아웃되었습니다");
@@ -126,6 +147,7 @@ public class Main {
 	}
 
 	private void runLogOutBoard() {
+		printLogOutBoard();
 		int sel = inputNumber("메뉴를 선택해주세요");
 		switch (sel) {
 		case SIGN_IN:
@@ -136,7 +158,10 @@ public class Main {
 			break;
 		}
 	}
-
+	private void printLogOutBoard() {
+		System.out.println("[1]로그인");
+		System.out.println("[2]회원 가입");
+	}
 	private void signIn() {
 		String id = inputString("ID를 입력해주세요");
 		String pw = inputString("비밀번호를 입력해주세요");
@@ -152,10 +177,12 @@ public class Main {
 
 	private void signUp() {
 		String id = inputString("ID를 입력해주세요");
+		if(users.getSize()>0) {
 		User temp = users.findUser(id);
 		if (temp != null) {
 			System.err.println("이미존재하는 아이디입니다");
 			return;
+		}
 		}
 		String pw = inputString("비밀번호를 입력해주세요");
 		User user = new User(id, pw);
@@ -165,30 +192,52 @@ public class Main {
 	}
 
 	private void printBoard() {
+		setPage();
+//		for(int i = 1; i <startRow; i++) {
+//			Board board = boards.getBoard(i);
+//			Post post = board.getPost();
+//			System.out.println(post);
+//		}
+		List<Integer> keySet = new ArrayList(boards.posts.keySet());
+		Collections.sort(keySet);
+		System.out.println(keySet);
 		System.out.println("=========Blind Time==========");
 		if (isMenu) {
 			if (log != -1)
 				System.out.println("[1]글쓰기 [2]글 수정 [3] 글 삭제 [4]로그아웃[5] 회원탈퇴");
 			else
 				System.out.println("[1]회원가입[2]로그인");
-		} else
+		} else {
 			System.out.println("[0]메뉴");
-		System.out.println("=============================");
-		if (startRow > PAGE_SIZE)
-			for (int i = startRow; i >= 0; i--) {
-				Post post = posts.get(i);
-				System.out.println(post);
-			}
-		else {
-			for (int i = startRow; i >= startRow - PAGE_SIZE; i--) {
-				Post post = posts.get(i);
-				System.out.println(post);
-			}
-
+		}
+		for (int i = startRow-1; i>=endRow ; i--) {
+			int number = keySet.get(i);
+			Board board =  BoardManager.posts.get(number);
+			String title = board.getPostHead();
+			String out = String.format("%s : %s", i, title);
+			System.out.println(out);
 		}
 		System.out.println("=============================");
+//		if (startRow > PAGE_SIZE)
+//			for (int i = startRow; i >= startRow - PAGE_SIZE; i--) {
+//				Board board = boards.getBoard(i);
+//				Post post = board.getPost();
+//				System.out.println(post);
+//			}
+//		else if(startRow>0){
+//			for (int i = startRow; i >= 0; i--) {
+//				Board board = boards.getBoard(i);
+//				if(board == null)
+//					continue;
+//				Post post = board.getPost();
+//				System.out.println(post);
+//
+//			}
+
+//		}
+		System.out.println("=============================");
 		System.out.println("[1]이전페이지 [2]다음페이지");
-		System.out.printf("[%d/%d]", boards.getCurPageNum(), pageCnt);
+		System.out.printf("[%d/%d]", curPageNum, pageCnt);
 		System.out.println("=============================");
 
 	}
@@ -196,7 +245,6 @@ public class Main {
 	public void run() {
 		setBoard();
 		while (true) {
-			movePage();
 			printBoard();
 			runBoard();
 		}

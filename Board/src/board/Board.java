@@ -23,4 +23,15 @@ public class Board {
 	public int curNum() {
 		return this.postNum;
 	}
+	
+	public String getPostHead() {
+		Post post = this.getPost();
+		return post.getHead();
+	}
+	@Override
+	public String toString() {
+		Post post = this.getPost();
+		
+		return String.format(""+post);
+	}
 }
