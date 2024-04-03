@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
-	private Map<Integer, Post> posts;// 게시글 번호/ 게시글
 	private UserManager users;
 	private BoardManager boards;
 	private List<Integer> keySet;
@@ -52,7 +51,6 @@ public class Main {
 
 	private void setBoard() {
 		log = -1;
-		posts = new HashMap<>();
 		boards = new BoardManager();
 		users = new UserManager();
 		curPageNum = 0;
@@ -227,14 +225,14 @@ public class Main {
 			else
 				System.out.println("[1]회원가입[2]로그인");
 		} else {
-			System.out.println("[0]메뉴");
+			System.out.println("[0]메뉴 [9]게시글 보기");
 		}
 		if (startRow > 0) {
 			for (int i = startRow - 1; i >= endRow; i--) {
 				int number = keySet.get(i);
 				Board board = BoardManager.posts.get(number);
 				String title = board.getPostHead();
-				String out = String.format("%s : %s", board.getPostNum(), title);
+				String out = String.format("게시글 번호 : %s | 제목 : %s", board.getPostNum(), title);
 				System.out.println(out);
 			}
 		}
